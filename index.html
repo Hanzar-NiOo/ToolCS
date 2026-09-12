@@ -564,7 +564,7 @@
     const originalBtnHTML = generateBtn.innerHTML;
     const originalDwnBtnHTML = downloadBtn.innerHTML;
     const originalCsvHTML = csvBtn.innerHTML;
-    // let   status = null;
+    let   status = null;
     const xlsxIcon = document.getElementById('xlsxIcon');
     
     function  changeState(status)
@@ -586,8 +586,8 @@
         dropzone.classList.add('disabledInputFile');
         dropzone.classList.remove('cursor-pointer');
         dropzone.classList.remove('hover:bg-surface-container-high');
-        abortedTransactionsInput.add('disabledInputFile');
-        exchangeRateInput.add('disabledInputFile');
+        abortedTransactionsInput.classList.add('disabledInput');
+        exchangeRateInput.classList.add('disabledInput');
       }
       else if (status === 'Generate Error' || status === 'Generate Success')
       {
@@ -603,8 +603,8 @@
         dropzone.classList.remove('disabledInputFile');
         dropzone.classList.add('cursor-pointer');
         dropzone.classList.add('hover:bg-surface-container-high');
-        abortedTransactionsInput.remove('disabledInputFile');
-        exchangeRateInput.remove('disabledInputFile');
+        abortedTransactionsInput.classList.remove('disabledInput');
+        exchangeRateInput.classList.remove('disabledInput');
       }
       else if (status === 'Download Generated Report')
       {
@@ -686,7 +686,7 @@
       // const fileUploadStatus = fileUploadCheckbox.checked;
       const dataUpdateStatus = dataUpdateCheckbox.checked;
       const abortedTransactions = parseInt(abortedTransactionsInput.value, 10);
-      const exchangeRate = parseFloat(exchangeRateInput.value);
+      const exchangeRate = parseFloat(exchangeRateInput.value) || 184;
 
       const file = fileInput.files[0];
 
@@ -697,6 +697,11 @@
 
       if (!startDate.value || !endDate.value) {
         showError('Please select time before generating the report.');
+        return;
+      }
+
+      if (!abortedTransactions) {
+        showError('Please fill the aborted transaction count.');
         return;
       }
 
