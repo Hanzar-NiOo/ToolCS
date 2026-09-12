@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en" style="">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>ToolCS</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <style>
+    /* Disable classes */
+    .disabledBtn {
+      background-color: var(--surface-container, #e0e0e0) !important;
+      color: var(--on-surface-variant, #9e9e9e) !important;
+      opacity: 0.6;
+      pointer-events: none;
+      box-shadow: none !important;
+    }
+
+    .disabledBtn:hover {
+      opacity: 0.6;
+    }
+
+    .disabledBtn:active {
+      transform: none !important;
+    }
+
+    .disabledInput {
+      background-color: var(--surface-container-low, #ececec) !important;
+      color: var(--on-surface-variant, #9e9e9e) !important;
+      opacity: 0.5;
+      cursor: not-allowed !important;
+      pointer-events: none;
+      border-color: var(--outline-variant, #d0d0d0) !important;
+    }
+
+    .disabledFileInput {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .disabledCheckboxRow {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .disabledCheckboxRow input[type="checkbox"] {
+      cursor: not-allowed !important;
+    }
+
+    .disabledXlsxIcon {
+      opacity: 0.5;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 1);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c6c6cd;
+      border-radius: 10px;
+    }
+  </style>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#45464d",
+            "outline": "#76777d",
+            "outline-variant": "#c6c6cd",
+            "primary": "#000000",
+            "on-primary": "#ffffff",
+            "primary-container": "#131b2e",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "on-secondary-container": "#fefcff",
+            "background": "#f8f9ff",
+            "on-background": "#0b1c30",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "xs": "4px",
+            "sm": "8px",
+            "md": "16px",
+            "lg": "24px",
+            "xl": "32px",
+            "gutter": "16px",
+            "margin-mobile": "16px",
+            "margin-desktop": "40px"
+          },
+          "fontFamily": {
+            "display-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "body-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-md": ["JetBrains Mono"],
+            "label-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen overflow-hidden">
+  <div class="flex h-screen">
+    <!-- Persistent Sidebar (Drawer) -->
+    <aside class="fixed inset-y-0 left-0 z-50 flex flex-col h-full w-72 bg-surface border-r border-outline-variant shadow-sm shrink-0">
+      <div class="flex flex-col items-start gap-1 p-4">
+        <div class="mb-2 px-4 w-full">
+          <img alt="ToolCS Refined Logo" class="w-[120px] object-contain h-20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-iyHEeAP2OKETGpLcLvJxRDXUbKi0rh4rQM9xv7LSrHL0IRo3A80L4u3dz3zYS5iEJWgY-ZWx5_P3O6TKZod905KRl2KGN37WhK6bbBm8r-L5SuW9xkptzkcm7_377bl0RHTT3yp-xlolvuZAddSJaCym1CtqPHhz6dsJEONO_YHH8-a3fYmHxKp7G0WGSbA1yUASDTlozG6vo5j6Lc-NOWhBnccOlpwk3zNtc4W-yHQtIFAI68GSTfkrgIkTgpAoDReNDNtGo6sk2PE"/>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 space-y-1">
+        <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="font-body-md">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-4 bg-surface-container text-secondary px-4 py-3 duration-150 ease-in-out rounded-lg" href="#">
+          <span class="material-symbols-outlined">assessment</span>
+          <span class="font-body-md font-semibold">Management Summary Report</span></a><a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
+          <span class="material-symbols-outlined">description</span>
+          <span class="font-body-md">Dispute Report</span>
+        </a>
+        <div class="mt-8 border-t border-outline-variant pt-4">
+          <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
+            <span class="material-symbols-outlined">settings</span>
+            <span class="font-body-md">Settings</span>
+          </a>
+        </div>
+      </nav>
+      <div class="p-4 border-t border-outline-variant flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary">account_circle</span>
+        <span class="font-label-md">CS Team</span>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="ml-72 flex-1 p-margin-desktop  overflow-y-auto bg-background custom-scrollbar w-full">
+      
+      <!-- Error message box -->
+      <div class="hidden w-full p-md bg-error-container border border-error rounded-lg items-center gap-2 mb-3" id="errorBox">
+        <span class="material-symbols-outlined text-error">error</span>
+        <span class="font-body-sm text-on-error-container flex-1" id="errorText"></span>
+        <span class="material-symbols-outlined text-error cursor-pointer" onclick="closeMessageBox('errorBox')">close</span>
+      </div>
+      <!-- success message box -->
+      <div class="hidden w-full p-md bg-[#e6f4ea] border border-[#34a853] rounded-lg items-center gap-2 mb-3" id="successBox">
+        <span class="material-symbols-outlined text-[#1e8e3e]">check_circle</span>
+        <span class="font-body-sm text-[#1e8e3e] flex-1" id="successText"></span>
+        <span class="material-symbols-outlined text-[#1e8e3e] cursor-pointer" onclick="closeMessageBox('successBox')">close</span>
+      </div>
+
+      <div class="max-w-7xl mx-auto w-full">
+        <header class="mb-lg">
+          <div class="flex items-center gap-2 mb-xs">
+            <span class="material-symbols-outlined text-secondary text-sm">analytics</span>
+            <span class="font-label-sm text-secondary uppercase tracking-widest">Report Generator</span>
+          </div>
+          <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tighter">Management Summary Report Generator</h2>
+          <p class="font-body-md text-on-surface-variant mt-2">Upload the Management Summary Report downloaded from operation portal.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 2xl:grid-cols-12 gap-lg w-full">
+          <!-- Left Column: Source & Parameters -->
+          <div class="lg:col-span-7 xl:col-span-7 2xl:col-span-7 space-y-lg flex flex-col w-full">
+            <!-- Section: Source Data -->
+            <section class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl shadow-sm w-full" id="step-2">
+              <div class="flex items-center gap-3 mb-md">
+                <span class="material-symbols-outlined text-primary text-2xl">calendar_month</span>
+                <h3 class="font-headline-md text-headline-md">Report Period</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-lg w-full">
+                <div class="flex flex-col gap-xs w-full">
+                  <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter">Start Date</label>
+                  <input class="bg-surface-container border border-outline-variant rounded p-md font-body-md outline-none w-full h-10" type="date" id="startDate"/>
+                </div>
+                <div class="flex flex-col gap-xs w-full">
+                  <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter">End Date</label>
+                  <input class="bg-surface-container border border-outline-variant rounded p-md font-body-md outline-none w-full h-10" type="date" id="endDate"/>
+                </div>
+              </div>
+            </section>
+            <!-- Input Area -->
+            <section class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl shadow-sm flex flex-col w-full" id="step-1">
+              <div class="flex items-center gap-3 mb-md">
+                <span class="material-symbols-outlined text-primary text-2xl">upload_file</span>
+                <h3 class="font-headline-md text-headline-md">Import</h3>
+              </div>
+
+              <div class="border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container-high cursor-pointer transition-colors group w-full" id="dropzone">
+
+                <!-- Prompt state -->
+                <div class="p-xl flex flex-col items-center justify-center w-full" style="min-height: 400px;" id="inputFileFiled">
+                  <span class="material-symbols-outlined text-4xl text-outline mb-md group-hover:text-secondary" id="cloud">cloud_upload</span>
+                  <p class="font-body-lg text-body-lg text-on-surface font-semibold mb-xs text-center" id="dragdropTxt">Drag and drop file here</p>
+                  <p class="font-body-sm text-on-surface-variant text-center" id="fileSize">Support CSV, XLSX (Max 50MB)</p>
+                  <input class="hidden" id="fileInput" type="file"/>
+                  <button class="mt-lg px-lg py-sm bg-surface border border-outline-variant font-label-md text-on-surface hover:bg-surface-variant transition-all rounded w-full" id="browseTxt">Browse Files</button>
+                </div>
+              </div>
+
+              <div class="mt-md space-y-2 w-full">
+                <div class="flex items-center gap-3 w-full">
+                  <div class="relative flex items-center">
+                    <input
+                      class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary bg-surface-container cursor-pointer"
+                      type="checkbox"
+                      id="dataUpdateCheckbox"
+                    />
+                  </div>
+                  <span class="ml-2 font-body-md text-on-surface">Update in 'Data Summary for Libeia'</span>
+                </div>
+              </div>
+            </section>
+            <!-- Section: Parameters -->
+            <div class="w-full">
+              <button class="w-full bg-secondary text-white py-lg rounded-xl font-headline-md shadow-md hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4" id="generateBtn" onclick="handleGenerateClick()">
+                <span class="material-symbols-outlined">settings_suggest</span>
+                Generate Report
+              </button>
+              <div class="hidden mt-md w-full" id="processingState">
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-secondary h-full transition-all duration-[3000ms] w-0" id="progressBar">
+                  </div>
+                </div>
+                <div class="flex justify-between mt-sm w-full">
+                <p class="font-label-sm text-secondary animate-pulse" id="statusText">Analyzing records...</p>
+                <p class="font-label-sm text-on-surface-variant" id="percentText">0%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right Column: Output Package (Redesigned) -->
+        <div class="lg:col-span-5 xl:col-span-5 2xl:col-span-5 flex flex-col gap-lg w-full">
+          <!-- Quick Preview -->
+          <div class="p-lg bg-surface-container-low border border-outline-variant rounded-xl w-full">
+            <div class="flex items-center gap-3 mb-md">
+              <span class="material-symbols-outlined text-primary text-2xl">timeline</span>
+              <h3 class="font-headline-md text-headline-md">Report Tracker</h3>
+            </div>
+            <div class="flex items-center justify-between mb-sm w-full">
+              <p class="font-label-sm text-outline uppercase tracking-wider">Calendar</p>
+              <span class="material-symbols-outlined text-outline text-sm">event</span>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant rounded p-md w-full">
+              <div class="flex items-center justify-between mb-md w-full">
+                <span class="font-label-md text-on-surface">October 2023</span>
+                <div class="flex gap-2">
+                  <span class="material-symbols-outlined text-sm cursor-pointer">chevron_left</span>
+                  <span class="material-symbols-outlined text-sm cursor-pointer">chevron_right</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center mb-2 w-full">
+                <span class="text-[10px] font-bold text-outline">S</span>
+                <span class="text-[10px] font-bold text-outline">M</span>
+                <span class="text-[10px] font-bold text-outline">T</span>
+                <span class="text-[10px] font-bold text-outline">W</span>
+                <span class="text-[10px] font-bold text-outline">T</span>
+                <span class="text-[10px] font-bold text-outline">F</span>
+                <span class="text-[10px] font-bold text-outline">S</span>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center w-full">
+              <span class="text-xs p-1 text-outline">24</span>
+              <span class="text-xs p-1 text-outline">25</span>
+              <span class="text-xs p-1 text-outline">26</span>
+              <span class="text-xs p-1 text-outline">27</span>
+              <span class="text-xs p-1 text-outline">28</span>
+              <span class="text-xs p-1 text-outline">29</span>
+              <span class="text-xs p-1 text-outline">30</span>
+              <span class="text-xs p-1">1</span>
+              <span class="text-xs p-1">2</span>
+              <span class="text-xs p-1">3</span>
+              <span class="text-xs p-1">4</span>
+              <span class="text-xs p-1">5</span>
+              <span class="text-xs p-1">6</span>
+              <span class="text-xs p-1">7</span>
+              <span class="text-xs p-1">8</span>
+              <span class="text-xs p-1">9</span>
+              <span class="text-xs p-1">10</span>
+              <span class="text-xs p-1">11</span>
+              <span class="text-xs p-1">12</span>
+              <span class="text-xs p-1">13</span>
+              <span class="text-xs p-1">14</span>
+              <span class="text-xs p-1">15</span>
+              <span class="text-xs p-1">16</span>
+              <span class="text-xs p-1">17</span>
+              <span class="text-xs p-1">18</span>
+              <span class="text-xs p-1">19</span>
+              <span class="text-xs p-1">20</span>
+              <span class="text-xs p-1">21</span>
+              <span class="text-xs p-1">22</span>
+              <span class="text-xs p-1">23</span>
+              <span class="text-xs p-1 bg-primary text-white rounded-full" title="Today">24</span>
+              <span class="text-xs p-1">25</span>
+              <span class="text-xs p-1">26</span>
+              <span class="text-xs p-1">27</span>
+              <span class="text-xs p-1">28</span>
+            </div>
+          </div>
+          <div class="mt-md w-full">
+            <button class="w-full bg-secondary text-white py-lg rounded-xl font-headline-md shadow-md hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4" id="csvBtn">
+              <span class="material-symbols-outlined">download</span>
+              Export CSV Data
+            </button>
+          </div>
+        </div>
+        <section class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden w-full" id="resultsSection"><!-- Header -->
+          <div class="p-lg border-b border-outline-variant flex items-center gap-3 w-full">
+            <span class="material-symbols-outlined text-primary text-2xl">folder_open</span>
+            <h3 class="font-headline-md text-headline-md">Output Package</h3>
+          </div>
+          <!-- Content Area -->
+          <div class="p-lg space-y-xl w-full">
+          <!-- Empty State Message -->
+            <div class="flex items-center w-full" id="emptyState">
+              <div class="flex flex-col items-center justify-center gap-2 bg-secondary-container/30 rounded-2xl p-lg w-22 h-20" id="xlsxIcon">
+                <span class="material-symbols-outlined text-secondary text-4xl">table_view</span>
+                <span class="font-label-sm text-secondary font-semibold">XLSX</span>
+              </div>
+              <div class="mx-4">
+                <h4 class="font-headline-md text-on-surface text-lg font-bold" id="fileName">No XLSX report generated yet</h4>
+                <p class="font-body-md text-on-surface-variant" id="resultantFileSize">Upload a file and click Generate</p>
+              </div>
+            </div>
+            <!-- Success State Details (Initially Hidden) -->
+            <div class="hidden space-y-md w-full" id="successDetails">
+              <div class="flex items-center justify-between pb-sm border-b border-outline-variant w-full">
+                <span class="text-on-surface-variant font-body-sm">Generated on</span>
+                <span class="font-label-md text-on-surface" id="timestamp">-</span>
+              </div>
+              <div class="flex items-center justify-between pb-sm border-b border-outline-variant w-full">
+                <span class="text-on-surface-variant font-body-sm">Accuracy Rate</span>
+                <span class="font-label-md text-on-surface">99.8%</span>
+              </div>
+            </div>
+                <!-- Action Buttons -->
+                <div class="space-y-md w-full">
+                  <button class="w-full bg-secondary text-white py-lg rounded-xl font-headline-md shadow-md hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabledBtn" id="downloadBtn">
+                    <span class="material-symbols-outlined">download</span>
+                    Download Report
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    // Import file handler
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const cloudIcon = document.getElementById('cloud');
+    const dragdropTxt = document.getElementById('dragdropTxt');
+    const fileSize = document.getElementById('fileSize');
+    const browseBtn = dropzone.querySelector('button');
+    const browseTxt = document.getElementById('browseTxt');
+
+    const DEFAULT_TXT = dragdropTxt.textContent;
+    const DEFAULT_HINT = fileSize.textContent;
+
+    function formatSize(bytes) {
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function showFileState(file) {
+      dragdropTxt.textContent = file.name;
+      fileSize.textContent = `${formatSize(file.size)} • Ready`;
+
+      cloudIcon.style.color = '#1a73e8';
+      dragdropTxt.style.color = '#1a73e8';
+      fileSize.style.color = '#1a73e8';
+      browseTxt.style.color = '#1a73e8';
+      // browseTxt.style.border-color = '#1a73e8';
+      browseTxt.style.borderColor = '#1a73e8';
+    }
+
+    function showPromptState() {
+      dragdropTxt.textContent = DEFAULT_TXT;
+      fileSize.textContent = DEFAULT_HINT;
+
+      cloudIcon.style.color = '';
+      dragdropTxt.style.color = '';
+      fileSize.style.color = '';
+
+      browseBtn.classList.remove('hidden');
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      showFileState(file);
+    }
+
+    const isDisabled = () => dropzone.classList.contains('disabledInputFile');
+
+    dropzone.addEventListener('click', () => {
+      if (isDisabled()) return;
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (isDisabled()) return;
+      const file = e.target.files[0];
+      handleFile(file);
+    });
+
+    // Drag and drop
+    dropzone.addEventListener('dragover', (e) => {
+      if (isDisabled()) return;
+      e.preventDefault();
+      dropzone.classList.add('bg-surface-container-high');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      if (isDisabled()) return;
+      dropzone.classList.remove('bg-surface-container-high');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      if (isDisabled()) return;
+      e.preventDefault();
+      dropzone.classList.remove('bg-surface-container-high');
+
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+
+      handleFile(file);
+    });
+
+    function resetFile() {
+      fileInput.value = '';
+      showPromptState();
+    }
+
+    // Handle success and error message
+    const errorBox = document.getElementById('errorBox');
+    const errorText = document.getElementById('errorText');
+    const successBox = document.getElementById('successBox');
+    const successText = document.getElementById('successText');
+
+    function showError(message) {
+      successBox.classList.add('hidden');
+      successBox.classList.remove('flex');
+
+      errorText.textContent = message;
+      errorBox.classList.remove('hidden');
+      errorBox.classList.add('flex');
+
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showSuccess(message) {
+      errorBox.classList.add('hidden');
+      errorBox.classList.remove('flex');
+
+      successText.textContent = message;
+      successBox.classList.remove('hidden');
+      successBox.classList.add('flex');
+
+      successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function hideMessages() {
+      errorBox.classList.add('hidden');
+      errorBox.classList.remove('flex');
+      successBox.classList.add('hidden');
+      successBox.classList.remove('flex');
+    }
+
+    // Close Button
+    function closeMessageBox(boxId) {
+      const box = document.getElementById(boxId);
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+    }
+
+    // Generate Report
+    // const fileUploadCheckbox = document.getElementById('fileUploadCheckbox');
+    const dataUpdateCheckbox = document.getElementById('dataUpdateCheckbox');
+    const generateBtn = document.getElementById('generateBtn');
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const csvBtn = document.getElementById('csvBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const inputFileFiled = document.getElementById('inputFileFiled');
+    const fileName = document.getElementById('fileName');
+    const originalfileNameHTML = fileName.innerHTML;
+    const resultantFileSize = document.getElementById('resultantFileSize');
+    const originalResultantFileSize = resultantFileSize.innerHTML;
+    const originalBtnHTML = generateBtn.innerHTML;
+    const originalDwnBtnHTML = downloadBtn.innerHTML;
+    const originalCsvHTML = csvBtn.innerHTML;
+    // let   status = null;
+    const xlsxIcon = document.getElementById('xlsxIcon');
+    
+    function  changeState(status)
+    {
+      if (status === 'Report Generating')
+      {
+        startDate.classList.add('disabledInput');
+        endDate.classList.add('disabledInput');
+        inputFileFiled.classList.add('disabledFileInput');
+        generateBtn.innerHTML = "Generating...";
+        fileName.innerHTML = "Generating...";
+        resultantFileSize.innerHTML = dragdropTxt.textContent + " is processing.";
+        // fileUploadCheckbox.classList.add('disabledCheckboxRow');
+        dataUpdateCheckbox.classList.add('disabledCheckboxRow');
+        generateBtn.classList.add('disabledBtn');
+        csvBtn.classList.add('disabledBtn');
+        xlsxIcon.classList.add('disabledXlsxIcon');
+        downloadBtn.classList.add('disabledBtn');
+        dropzone.classList.add('disabledInputFile');
+        dropzone.classList.remove('cursor-pointer');
+        dropzone.classList.remove('hover:bg-surface-container-high');
+      }
+      else if (status === 'Generate Error' || status === 'Generate Success')
+      {
+        startDate.classList.remove('disabledInput');
+        endDate.classList.remove('disabledInput');
+        inputFileFiled.classList.remove('disabledFileInput');
+        generateBtn.innerHTML = originalBtnHTML;
+        // fileUploadCheckbox.classList.remove('disabledCheckboxRow');
+        dataUpdateCheckbox.classList.remove('disabledCheckboxRow');
+        generateBtn.classList.remove('disabledBtn');
+        csvBtn.classList.remove('disabledBtn');
+        xlsxIcon.classList.remove('disabledXlsxIcon');
+        dropzone.classList.remove('disabledInputFile');
+        dropzone.classList.add('cursor-pointer');
+        dropzone.classList.add('hover:bg-surface-container-high');
+      }
+      else if (status === 'Download Generated Report')
+      {
+        downloadBtn.innerHTML = 'Downloading...';
+        downloadBtn.classList.add('disabledBtn');
+      }
+      else if (status === 'Download Generated Report Result')
+      {
+        downloadBtn.innerHTML = originalDwnBtnHTML;
+        downloadBtn.classList.remove('disabledBtn');
+      }
+      else if (status === 'Download CSV')
+      {
+        csvBtn.innerHTML = 'Downloading...';
+        csvBtn.classList.add('disabledBtn');
+      }
+      else if (status === 'Download CSV Result')
+      {
+        csvBtn.innerHTML = originalCsvHTML;
+        csvBtn.classList.remove('disabledBtn');
+      }
+    }
+
+    function  showResultantData(result)
+    {
+      if (result)
+      {
+        fileName.textContent = result.name;
+        resultantFileSize.textContent = result.sizeText + ' • Generated ' + result.generatedAt;
+        downloadBtn.classList.remove('disabledBtn');
+      }
+      else
+      {
+        fileName.innerHTML = "Failed to generate.";
+        resultantFileSize.textContent = '0 MB';
+        downloadBtn.classList.add('disabledBtn');
+      }
+    }
+
+    // File validation
+    function isValidFileType(file) {
+      const allowedExtensions = ['csv', 'xlsx'];
+      const allowedMimeTypes = [
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (!allowedExtensions.includes(extension) || 
+          (file.type && !allowedMimeTypes.includes(file.type))) {
+        return false;
+      }
+
+      return true;
+    }
+
+    // File validation
+    function isValidFileType(file) {
+      const allowedExtensions = ['csv', 'xlsx'];
+      const allowedMimeTypes = [
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+
+      const extension = file.name.split('.').pop().toLowerCase();
+
+      if (!allowedExtensions.includes(extension) || 
+          (file.type && !allowedMimeTypes.includes(file.type))) {
+        return false;
+      }
+
+      return true;
+    }
+    
+    function handleGenerateClick() {
+      // const fileUploadStatus = fileUploadCheckbox.checked;
+      const dataUpdateStatus = dataUpdateCheckbox.checked;
+
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showError('Please select a file before generating the report.');
+        return;
+      }
+
+      if (!startDate.value || !endDate.value) {
+        showError('Please select time before generating the report.');
+        return;
+      }
+
+      if (status === 'Download CSV' || status === 'Download Generated Report') {
+        showError('Program can\'t run two functions at the same time');
+        return;
+      }
+
+      if (isValidFileType(file))
+      {
+        status = 'Report Generating';
+        changeState(status);
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const base64 = e.target.result.split(',')[1];
+
+          google.script.run
+          .withSuccessHandler(function (result) {
+            status = 'Generate Success';
+            changeState(status);
+            generatedReport = result;
+            showResultantData(result);
+            showSuccess('Report generated successfully! Click Download to save it.');
+          })
+          .withFailureHandler(function (err) {
+            status = 'Generate Error';
+            changeState(status);
+            showResultantData(null);
+            showError(err.message);
+          })
+          .mgnSummaryReport(
+            base64,
+            file.name,
+            file.type,
+            startDate.value,
+            endDate.value,
+            dataUpdateStatus
+            // fileUploadStatus
+          );
+        };
+
+        reader.onerror = function () {
+          status = 'Generate Error';
+          changeState(status);
+          showError('Failed to read the file. Please try again.');
+        };
+
+        reader.readAsDataURL(file);
+      }
+      else
+      {
+        status = 'Generate Error';
+        changeState(status);
+        showResultantData(null);
+        showError('Invalid file type. Please upload a CSV or XLSX file.');
+      }
+    }
+
+    // Download the report file
+    let generatedReport = null;
+
+    downloadBtn.addEventListener('click', () => {
+      if (!generatedReport || !generatedReport.base64) {
+        showError('No report available to download. Please generate a report first.');
+        return;
+      }
+
+      status = 'Download Generated Report';
+      changeState(status);
+
+      try {
+        const byteCharacters = atob(generatedReport.base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: generatedReport.mimeType });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = generatedReport.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Delay revoke slightly to ensure download starts in all browsers
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        // showSuccess('Downloaded the generated report successfully');
+      }
+      catch (err) {
+        showError('Failed to download the report. Please try again.');
+      }
+      finally {
+        status = 'Download Generated Report Result';
+        changeState(status);
+      }
+    });
+
+    // Download CSV
+    csvBtn.addEventListener('click', () => {
+      status = 'Download CSV';
+      changeState(status);
+
+      google.script.run
+      .withSuccessHandler(function (result) {
+        const byteCharacters = atob(result.base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: result.mimeType });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        if (status != 'Report Generating')
+        {
+          status = 'Download CSV Result';
+          changeState(status);
+        }
+      })
+      .withFailureHandler(function (err) {
+        if (status != 'Report Generating')
+        {
+          status = 'Download CSV Result';
+          changeState(status);
+        }
+        showError('Failed to download CSV');
+      })
+      .getCsvFile();
+    });
+  </script>
+</body></html>
