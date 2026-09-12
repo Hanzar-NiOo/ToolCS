@@ -1,6 +1,7 @@
 const fileId = "1gsSy1pJWEoUM52JoSvapimWZQVmHozHs";
 const monthlySheetId = "1058338125";
 const DFSPsSheetId = "2037740635";
+const backupFolderID = "1gtsp5Su8uf-jfuEZ-_U_yO_ZTJPrRFVy";
 
 function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, dataUpdate, abortedTransactions, exchangeRate)
 {
@@ -26,8 +27,9 @@ function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, data
   
   if (dataUpdate)
   {
-    updateDFSPsSheet(fileId, DFSPsSheetId, values, fromDate);
-    updateMonthlySheet(fileId, monthlySheetId, values, fromDate);
+    uploadBackupFile(fileId, backupFolderID);
+    // updateDFSPsSheet(fileId, DFSPsSheetId, values, fromDate);
+    // updateMonthlySheet(fileId, monthlySheetId, values, fromDate);
   }
 
   SpreadsheetApp.flush();

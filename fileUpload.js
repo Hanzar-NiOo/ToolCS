@@ -33,3 +33,25 @@
 //     throw new Error("Failed to upload the file");
 //   }
 // }
+
+function uploadBackupFile(fileId, folderId)
+{
+  try
+  {
+    const originalFile = Drive.Files.get(fileId);
+
+    const backupFile = Drive.Files.copy(
+      {
+        title: "Backup_for_" + originalFile.title,
+        parents: [{ id: folderId }]
+      },
+      fileId
+    );
+
+    return backupFile;
+  }
+  catch (e)
+  {
+    throw new Error("Failed to backup 'Data Summary for Liberia': " + e.message);
+  }
+}
