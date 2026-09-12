@@ -1,12 +1,8 @@
 const fileId = "1gsSy1pJWEoUM52JoSvapimWZQVmHozHs";
 const monthlySheetId = "1058338125";
 const DFSPsSheetId = "2037740635";
-const LRD_to_USD = 184;
 
-// Test
-abortedCount = "";
-
-function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, dataUpdate)
+function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, dataUpdate, abortedTransactions, exchangeRate)
 {
   // Initiate the sheet
   const bytes = Utilities.base64Decode(base64Data);
@@ -23,10 +19,10 @@ function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, data
   const theLatestRow = sheet.getLastRow();
   headerRow = theLatestRow + 2;
 
-  values = getTheValues(sheet, theLatestRow, LRD_to_USD);
+  values = getTheValues(sheet, theLatestRow, exchangeRate);
   createSummaryTableStructure(sheet, headerRow);
-  addAbortedTransactionsBox(sheet, headerRow + 7, abortedCount);
-  setValuesInSummaryTable(sheet, headerRow, values, LRD_to_USD);
+  addAbortedTransactionsBox(sheet, headerRow + 7, abortedTransactions);
+  setValuesInSummaryTable(sheet, headerRow, values, exchangeRate);
   
   if (dataUpdate)
   {

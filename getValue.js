@@ -63,7 +63,7 @@ function getTransactionData(sheet, type, theLatestRow)
   ];
 }
 
-function  getTheValues(sheet, theLatestRow, LRD_to_USD)
+function  getTheValues(sheet, theLatestRow, exchangeRate)
 {
   // Get the transaction Counts
   [
@@ -107,7 +107,7 @@ function  getTheValues(sheet, theLatestRow, LRD_to_USD)
   totalLRDTransactionAmount = P2PLRDTransactionAmount + G2PLRDTransactionAmount;
   totalUSDTransactionAmount = P2PUSDTransactionAmount + G2PUSDTransactionAmount;
   totalTransactionCount = totalLRDTransactionCount + totalUSDTransactionCount;
-  totalTransactionAmount = (totalLRDTransactionAmount / LRD_to_USD) + totalUSDTransactionAmount;
+  totalTransactionAmount = (totalLRDTransactionAmount / exchangeRate) + totalUSDTransactionAmount;
 
   values =  [
               OMtoMTN_LRD_Count, OMtoMTN_USD_Count, MTNtoOM_LRD_Count, MTNtoOM_USD_Count,

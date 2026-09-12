@@ -25,7 +25,7 @@ function setTheValue(sheet, headerRow, row, col, rowName, colName, value)
   }
 }
 
-function  setValuesInSummaryTable(sheet, headerRow, values, LRD_to_USD)
+function  setValuesInSummaryTable(sheet, headerRow, values, exchangeRate)
 {
   // Set the values
   setTheValue(sheet, headerRow + 1, headerRow + 2, 2, "P2P", "LRD Transactions", formatCount(P2PLRDTransactionCount));
@@ -33,10 +33,10 @@ function  setValuesInSummaryTable(sheet, headerRow, values, LRD_to_USD)
   setTheValue(sheet, headerRow + 1, headerRow + 3, 2, "G2P", "LRD Transactions", formatCount(G2PLRDTransactionCount));
   setTheValue(sheet, headerRow + 1, headerRow + 3, 3, "G2P", "USD Transactions", formatCount(G2PUSDTransactionCount));
   setTheValue(sheet, headerRow + 1, headerRow + 2, 4, "P2P", "LRD Value Processed", formatNumber(P2PLRDTransactionAmount));
-  setTheValue(sheet, headerRow + 1, headerRow + 2, 5, "P2P", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(P2PUSDTransactionAmount / LRD_to_USD));
+  setTheValue(sheet, headerRow + 1, headerRow + 2, 5, "P2P", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(P2PUSDTransactionAmount / exchangeRate));
   setTheValue(sheet, headerRow + 1, headerRow + 2, 6, "P2P", "USD Value Processed", formatNumber(P2PUSDTransactionAmount));
   setTheValue(sheet, headerRow + 1, headerRow + 3, 4, "G2P", "LRD Value Processed", formatNumber(G2PLRDTransactionAmount));
-  setTheValue(sheet, headerRow + 1, headerRow + 3, 5, "G2P", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(G2PLRDTransactionAmount / LRD_to_USD));
+  setTheValue(sheet, headerRow + 1, headerRow + 3, 5, "G2P", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(G2PLRDTransactionAmount / exchangeRate));
   setTheValue(sheet, headerRow + 1, headerRow + 3, 6, "G2P", "USD Value Processed", formatNumber(G2PUSDTransactionAmount));
 
   // Set the total values
@@ -44,7 +44,7 @@ function  setValuesInSummaryTable(sheet, headerRow, values, LRD_to_USD)
   setTheValue(sheet, headerRow + 1, headerRow + 4, 3, "Total", "USD Transactions", formatCount(totalUSDTransactionCount));
   setTheValue(sheet, headerRow, headerRow + 5, 2, "Grand Total", "Transaction Counts", formatCount(totalTransactionCount));
   setTheValue(sheet, headerRow + 1, headerRow + 4, 4, "Total", "LRD Value Processed", formatNumber(totalLRDTransactionAmount));
-  setTheValue(sheet, headerRow + 1, headerRow + 4, 5, "Total", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(totalLRDTransactionAmount / LRD_to_USD));
+  setTheValue(sheet, headerRow + 1, headerRow + 4, 5, "Total", "LRD Value equilvalent USD(184LRD/USD)", formatNumber(totalLRDTransactionAmount / exchangeRate));
   setTheValue(sheet, headerRow + 1, headerRow + 4, 6, "Total", "USD Value Processed", formatNumber(totalUSDTransactionAmount));
   setTheValue(sheet, headerRow, headerRow + 5, 4, "Grand Total", "Amount", formatNumber(totalTransactionAmount));
 }

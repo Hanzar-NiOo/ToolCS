@@ -227,7 +227,25 @@
                   <input class="bg-surface-container border border-outline-variant rounded p-md font-body-md outline-none w-full h-10" type="date" id="endDate"/>
                 </div>
               </div>
+
+              <div class="flex flex-col gap-1.5 w-full my-3">
+                <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter" for="abortedTransactions">Aborted Transactions</label>
+                <div class="relative flex items-center">
+                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="abortedTransactions" min="0" name="abortedTransactions" placeholder="e.g. 0" type="number">
+                  <span class="absolute right-3.5 material-symbols-outlined text-outline text-lg pointer-events-none">tag</span>
+                </div>
+                <span class="text-xs text-outline mt-0.5">Specify aborted transactions count to include in summary report calculations.</span>
+              </div>
+              <div class="flex flex-col gap-1.5 w-full my-3">
+                <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter" for="exchangeRate">LRD to USD Exchange Rate</label>
+                <div class="relative flex items-center">
+                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="exchangeRate" min="0" name="exchangeRate" placeholder="e.g. 184.00" type="number">
+                  <span class="absolute right-3.5 material-symbols-outlined text-outline text-lg pointer-events-none">tag</span>
+                </div>
+                <span class="text-xs text-outline mt-0.5">Enter current Liberian Dollar to US Dollar conversion rate.</span>
+              </div>
             </section>
+
             <!-- Input Area -->
             <section class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl shadow-sm flex flex-col w-full" id="step-1">
               <div class="flex items-center gap-3 mb-md">
@@ -530,6 +548,8 @@
 
     // Generate Report
     // const fileUploadCheckbox = document.getElementById('fileUploadCheckbox');
+    const abortedTransactionsInput = document.getElementById('abortedTransactions');
+    const exchangeRateInput = document.getElementById('exchangeRate');
     const dataUpdateCheckbox = document.getElementById('dataUpdateCheckbox');
     const generateBtn = document.getElementById('generateBtn');
     const startDate = document.getElementById('startDate');
@@ -566,6 +586,8 @@
         dropzone.classList.add('disabledInputFile');
         dropzone.classList.remove('cursor-pointer');
         dropzone.classList.remove('hover:bg-surface-container-high');
+        abortedTransactionsInput.add('disabledInputFile');
+        exchangeRateInput.add('disabledInputFile');
       }
       else if (status === 'Generate Error' || status === 'Generate Success')
       {
@@ -581,6 +603,8 @@
         dropzone.classList.remove('disabledInputFile');
         dropzone.classList.add('cursor-pointer');
         dropzone.classList.add('hover:bg-surface-container-high');
+        abortedTransactionsInput.remove('disabledInputFile');
+        exchangeRateInput.remove('disabledInputFile');
       }
       else if (status === 'Download Generated Report')
       {
@@ -661,6 +685,8 @@
     function handleGenerateClick() {
       // const fileUploadStatus = fileUploadCheckbox.checked;
       const dataUpdateStatus = dataUpdateCheckbox.checked;
+      const abortedTransactions = parseInt(abortedTransactionsInput.value, 10);
+      const exchangeRate = parseFloat(exchangeRateInput.value);
 
       const file = fileInput.files[0];
 
@@ -708,8 +734,10 @@
             file.type,
             startDate.value,
             endDate.value,
-            dataUpdateStatus
-            // fileUploadStatus
+            dataUpdateStatus,
+            // fileUploadStatus,
+            abortedTransactions,
+            exchangeRate
           );
         };
 
