@@ -12,11 +12,13 @@ function setTheValue(sheet, headerRow, row, col, rowName, colName, value)
       {
         throw new Error('Failed to update in "Data Summary for Libeia"');
       }
-      sheet.getRange(row, col).setValue(value).setFontFamily("Arial");
+      sheet.getRange(row, col).setValue(value);
+      applyTextStyle(sheet.getRange(row, col), "body");
     }
     else if (cellRowName === rowName)
     {
-      sheet.getRange(row, col).setValue(value).setFontFamily("Calibri");
+      sheet.getRange(row, col).setValue(value);
+      applyTextStyle(sheet.getRange(row, col), "body");
     }
   }
   else
@@ -49,19 +51,21 @@ function  setValuesInSummaryTable(sheet, headerRow, values, exchangeRate)
   setTheValue(sheet, headerRow, headerRow + 5, 4, "Grand Total", "Amount", formatNumber(totalTransactionAmount));
 }
 
-function toMonthYear(isoDateString) {
-    const date = new Date(isoDateString + "T00:00:00Z");
-    const month = date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
-    const year = String(date.getUTCFullYear()).slice(-2);
-    return month + '-' + year;
+function toMonthYear(isoDateString)
+{
+  const date = new Date(isoDateString + "T00:00:00Z");
+  const month = date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+  const year = date.getUTCFullYear(); // full 4-digit year, no truncation
+  return month + '-' + year;
 }
 
-function toMonthYear2(dateInput) {
+function toMonthYear2(dateInput)
+{
   var date = new Date(dateInput);
-  return Utilities.formatDate(date, "GMT+7", "MMM-yy");
+  return Utilities.formatDate(date, "GMT+7", "MMM-yyyy");
 }
 
-function  initiateTheSheet(fileId, sheetId, fromDate)
+function initiateTheSheet(fileId, sheetId, fromDate)
 {
   const spreadsheet = SpreadsheetApp.openById(fileId);
   const sheet   = spreadsheet.getSheetById(sheetId);
@@ -74,13 +78,14 @@ function  initiateTheSheet(fileId, sheetId, fromDate)
   if (formatMonth != formatReportMonth)
   {
     row = lastRow + 1;
-    sheet.getRange(row, 1).setValue(formatReportMonth).setFontFamily('Arial');
+    sheet.getRange(row, 1).setValue(formatReportMonth);
+    applyTextStyle(sheet.getRange(row, 1), "body");
   }
 
   return [sheet, row, formatReportMonth];
 }
 
-function  updateMonthlySheet(fileId, monthlySheetId, values, currentMonth)
+function  updateMonthlySheet(fileId, monthlySheetId, values, currentMonth, abortedTransactions)
 {
   [sheet, row] = initiateTheSheet(fileId, monthlySheetId, currentMonth);
 
@@ -95,6 +100,7 @@ function  updateMonthlySheet(fileId, monthlySheetId, values, currentMonth)
   setTheValue(sheet, 1, row, 9, null, "G2P Total Amount(USD)", formatNumber(G2PUSDTransactionAmount));
   setTheValue(sheet, 1, row, 10, null, "Total LRD", formatNumber(totalLRDTransactionAmount));
   setTheValue(sheet, 1, row, 11, null, "Total USD", formatNumber(totalUSDTransactionAmount));
+  setTheValue(sheet, 1, row, 12, null, "Aborted Transactions Counts", formatNumber(abortedTransactions));
 }
 
 function  updateDFSPsSheet(fileId, DFSPsSheetId, values, currentMonth)

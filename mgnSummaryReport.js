@@ -28,8 +28,9 @@ function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, data
   if (dataUpdate)
   {
     uploadBackupFile(fileId, backupFolderID);
-    // updateDFSPsSheet(fileId, DFSPsSheetId, values, fromDate);
-    // updateMonthlySheet(fileId, monthlySheetId, values, fromDate);
+    renameOriginalFile(fileId, fromDate, toDate)
+    updateDFSPsSheet(fileId, DFSPsSheetId, values, fromDate);
+    updateMonthlySheet(fileId, monthlySheetId, values, fromDate, abortedTransactions);
   }
 
   SpreadsheetApp.flush();
@@ -73,20 +74,29 @@ function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, data
   }
 }
 
-function getCsvFile() {
+function getCsvFile()
+{
   try
   {
-    var file = DriveApp.getFileById(fileId);
-    var blob = file.getBlob();
-    var bytes = blob.getBytes();
-    var base64 = Utilities.base64Encode(bytes);
+    const url = "https://docs.google.com/spreadsheets/d/" + fileId + "/export?format=xlsx";
+    const token = ScriptApp.getOAuthToken();
+    const response = UrlFetchApp.fetch(url, {
+      headers: { Authorization: "Bearer " + token }
+    });
+    const blob = response.getBlob();
+    const bytes = blob.getBytes();
+    const base64 = Utilities.base64Encode(bytes);
+
+    const file = DriveApp.getFileById(fileId);
 
     return {
       base64: base64,
-      name: file.getName(),
-      mimeType: "text/csv"
+      name: file.getName() + ".xlsx",
+      mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     };
-  } catch (e) {
-    throw new Error("Failed to download");
+  }
+  catch (e)
+  {
+    throw new Error("Failed to download file: " + e.message);
   }
 }

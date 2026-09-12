@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en" style="">
+<html class="light" lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -159,16 +159,18 @@
         </div>
       </div>
       <nav class="flex-1 px-4 space-y-1">
-        <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
+        <!-- <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
           <span class="material-symbols-outlined">dashboard</span>
           <span class="font-body-md">Dashboard</span>
-        </a>
+        </a> -->
         <a class="flex items-center gap-4 bg-surface-container text-secondary px-4 py-3 duration-150 ease-in-out rounded-lg" href="#">
           <span class="material-symbols-outlined">assessment</span>
-          <span class="font-body-md font-semibold">Management Summary Report</span></a><a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
+          <span class="font-body-md font-semibold">Management Summary Report</span>
+        </a>
+        <!-- <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
           <span class="material-symbols-outlined">description</span>
           <span class="font-body-md">Dispute Report</span>
-        </a>
+        </a> -->
         <div class="mt-8 border-t border-outline-variant pt-4">
           <a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container duration-150 ease-in-out rounded-lg" href="#">
             <span class="material-symbols-outlined">settings</span>
@@ -231,7 +233,7 @@
               <div class="flex flex-col gap-1.5 w-full my-3">
                 <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter" for="abortedTransactions">Aborted Transactions</label>
                 <div class="relative flex items-center">
-                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="abortedTransactions" min="0" name="abortedTransactions" placeholder="e.g. 0" type="number">
+                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="abortedTransactions" min="0" name="abortedTransactions" placeholder="0" type="number">
                   <span class="absolute right-3.5 material-symbols-outlined text-outline text-lg pointer-events-none">tag</span>
                 </div>
                 <span class="text-xs text-outline mt-0.5">Specify aborted transactions count to include in summary report calculations.</span>
@@ -239,7 +241,7 @@
               <div class="flex flex-col gap-1.5 w-full my-3">
                 <label class="font-label-sm text-on-surface-variant uppercase tracking-tighter" for="exchangeRate">LRD to USD Exchange Rate</label>
                 <div class="relative flex items-center">
-                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="exchangeRate" min="0" name="exchangeRate" placeholder="e.g. 184.00" type="number">
+                  <input class="bg-surface-container border border-outline-variant rounded-lg px-3.5 py-2.5 text-sm font-body-md outline-none w-full text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors pr-10" id="exchangeRate" min="0" name="exchangeRate" placeholder="184.00" type="number">
                   <span class="absolute right-3.5 material-symbols-outlined text-outline text-lg pointer-events-none">tag</span>
                 </div>
                 <span class="text-xs text-outline mt-0.5">Enter current Liberian Dollar to US Dollar conversion rate.</span>
