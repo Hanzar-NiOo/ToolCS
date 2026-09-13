@@ -1,4 +1,4 @@
-const fileId = "1gsSy1pJWEoUM52JoSvapimWZQVmHozHs";
+const fileId = "1BldmGPS5z5tlPjIYJrxZjJsdycqJS1M6";
 const monthlySheetId = "1058338125";
 const DFSPsSheetId = "2037740635";
 const backupFolderID = "1gtsp5Su8uf-jfuEZ-_U_yO_ZTJPrRFVy";
@@ -28,7 +28,7 @@ function mgnSummaryReport(base64Data, fileName, mimeType, fromDate, toDate, data
   if (dataUpdate)
   {
     uploadBackupFile(fileId, backupFolderID);
-    renameOriginalFile(fileId, fromDate, toDate)
+    renameOriginalFile(fileId, fromDate, toDate);
     updateDFSPsSheet(fileId, DFSPsSheetId, values, fromDate);
     updateMonthlySheet(fileId, monthlySheetId, values, fromDate, abortedTransactions);
   }
