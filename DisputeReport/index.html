@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ToolCS - Management Summary Report</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    .disabledBtn {
+      background-color: var(--surface-container, #e0e0e0) !important;
+      color: var(--on-surface-variant, #9e9e9e) !important;
+      opacity: 0.6;
+      pointer-events: none;
+      box-shadow: none !important;
+    }
+    .disabledBtn:hover { opacity: 0.6; }
+    .disabledBtn:active { transform: none !important; }
+    .disabledInput {
+      background-color: var(--surface-container-low, #ececec) !important;
+      color: var(--on-surface-variant, #9e9e9e) !important;
+      opacity: 0.5;
+      cursor: not-allowed !important;
+      pointer-events: none;
+      border-color: var(--outline-variant, #d0d0d0) !important;
+    }
+    .disabledFileInput { opacity: 0.4; pointer-events: none; }
+    .disabledCheckboxRow { opacity: 0.4; pointer-events: none; }
+    .disabledCheckboxRow input[type="checkbox"] { cursor: not-allowed !important; }
+    .disabledXlsxIcon { opacity: 0.5; }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #c6c6cd; border-radius: 10px; }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#45464d",
+            "outline": "#76777d",
+            "outline-variant": "#c6c6cd",
+            "primary": "#000000",
+            "on-primary": "#ffffff",
+            "primary-container": "#131b2e",
+            "on-primary-container": "#7c839b",
+            "secondary": "#0051d5",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#316bf3",
+            "on-secondary-container": "#fefcff",
+            "background": "#f8f9ff",
+            "on-background": "#0b1c30",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a"
+          },
+          borderRadius: {
+            DEFAULT: "0.125rem",
+            lg: "0.375rem",
+            xl: "0.75rem",
+            full: "0.75rem"
+          },
+          fontFamily: {
+            "display-lg": ["Hanken Grotesk", "sans-serif"],
+            "headline-lg": ["Hanken Grotesk", "sans-serif"],
+            "headline-md": ["Hanken Grotesk", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "label-md": ["JetBrains Mono", "monospace"],
+            "label-sm": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex">
+<!-- Persistent Desktop Left Sidebar -->
+<aside class="fixed inset-y-0 left-0 z-30 w-72 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between">
+<div>
+<!-- Brand Logo Header -->
+<div class="h-16 px-6 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-white shadow-xs">
+<span class="material-symbols-outlined text-lg">analytics</span>
+</div>
+<span class="font-headline-md text-xl font-bold tracking-tight text-on-surface">Tool<span class="text-secondary">CS</span></span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="p-4 space-y-1.5">
+<a class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl bg-secondary-container/15 text-secondary font-semibold transition-colors text-sm" href="#">
+<span class="material-symbols-outlined text-xl">assessment</span>
+<span class="">Management Summary Report</span>
+</a>
+<a class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-xl">description</span>
+<span class="">Dispute Report</span>
+</a>
+<a class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Bottom User Profile Card -->
+<div class="p-4 border-t border-outline-variant">
+<div class="flex items-center gap-3 p-2 rounded-xl bg-surface-container-low border border-outline-variant">
+<div class="w-9 h-9 rounded-lg bg-secondary text-white flex items-center justify-center font-bold text-xs">
+          CS
+        </div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-semibold text-on-surface truncate">Customer Success Team</p>
+<p class="text-[11px] text-on-surface-variant truncate">team@toolcs.internal</p>
+</div>
+<span class="material-symbols-outlined text-outline text-lg">more_vert</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-72 flex-1 min-h-screen bg-background p-8 lg:p-10 flex flex-col"><div class="flex flex-col w-full">
+<!-- Notification System Banners -->
+<div class="hidden items-center justify-between p-4 mb-6 rounded-xl bg-error-container text-on-error-container shadow-sm transition-all duration-300" id="errorBox">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error text-xl">error</span>
+<span class="text-sm font-medium" id="errorText">An error occurred while generating the dispute report.</span>
+</div>
+<button class="p-1 rounded-lg hover:bg-black/5 text-on-error-container" onclick="closeMessageBox('errorBox')">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="hidden items-center justify-between p-4 mb-6 rounded-xl bg-surface-container-high text-secondary shadow-sm transition-all duration-300" id="successBox">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-xl">check_circle</span>
+<span class="text-sm font-semibold" id="successText">Report successfully generated.</span>
+</div>
+<button class="p-1 rounded-lg hover:bg-black/5 text-secondary" onclick="closeMessageBox('successBox')">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Workspace Header Area -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">gavel</span>
+<span class="font-label-sm text-[11px] tracking-widest uppercase font-semibold text-secondary">DISPUTE RESOLUTION</span>
+<span class="text-outline-variant font-mono text-xs">•</span>
+<span class="font-label-sm text-[11px] tracking-widest uppercase text-on-surface-variant">REPORT GENERATOR</span>
+</div>
+<h1 class="font-headline-lg text-3xl font-bold tracking-tight text-on-surface">Dispute Report Generator</h1>
+<p class="text-sm text-on-surface-variant max-w-2xl font-body-md">
+        Generate and reconcile dispute investigation reports for payment transactions and settlement claims.
+      </p>
+</div>
+<!-- Right Top Portal Badge -->
+<div class="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-low shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+</span>
+<span class="font-label-sm text-xs font-medium text-on-surface">Operational Portal Connected</span>
+<span class="material-symbols-outlined text-xs text-outline">verified</span>
+</div>
+</div>
+<!-- Main Grid Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Forms, Source Import, Action -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Card 1: Dispute Parameters & Metadata -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 bg-surface-container-lowest">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">assignment</span>
+</div>
+<h2 class="font-headline-md text-base font-bold text-on-surface">Dispute Details</h2>
+</div>
+<span class="font-label-sm text-[11px] font-medium text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">FORM REF: DP-2023-V2</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- 1. Report Date -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="reportDate">
+<span>REPORT DATE</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-xs font-medium text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary" id="reportDate" type="date" value="2023-10-24"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-outline pointer-events-none">calendar_today</span>
+</div>
+</div>
+<!-- 2. Serial Number -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="serialNumber">
+<span>SERIAL NUMBER</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="absolute left-3 top-2.5 font-label-md text-xs text-outline font-bold">#</span>
+<input class="w-full h-10 pl-7 pr-3 rounded-lg bg-surface-container-low text-xs font-mono font-medium text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary" id="serialNumber" placeholder="e.g. 20231024-001" type="text" value="20231024-001"/>
+</div>
+</div>
+<!-- 3. Failed Count from Payment Manager -->
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="failedCount">
+<span>FAILED COUNT FROM PAYMENT MANAGER</span>
+<span class="text-error">*</span>
+</label>
+<span class="text-[11px] text-outline font-medium">Synced from Portal API</span>
+</div>
+<div class="relative">
+<input class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary" id="failedCount" min="0" placeholder="e.g. 14" type="number" value="14"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-outline pointer-events-none">warning</span>
+</div>
+<p class="text-[11px] text-on-surface-variant">Count of failed transactions retrieved from Payment Manager portal.</p>
+</div>
+<!-- 4. Investigator Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="investigatorName">
+<span>INVESTIGATOR NAME</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-container-low text-xs font-medium text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary" id="investigatorName" placeholder="e.g. John Doe" type="text" value="Alex Mercer"/>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-base text-outline pointer-events-none">person</span>
+</div>
+</div>
+<!-- 5. Position -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="investigatorPosition">
+<span>POSITION</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 rounded-lg bg-surface-container-low text-xs font-medium text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary appearance-none cursor-pointer" id="investigatorPosition">
+<option disabled="" value="">Select position...</option>
+<option value="Manager">Manager</option>
+<option selected="" value="Senior">Senior</option>
+<option value="Associate">Associate</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- 6. Report Type -->
+<div class="flex flex-col gap-1.5 md:col-span-2">
+<label class="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5" for="reportType">
+<span>REPORT TYPE</span>
+<span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 rounded-lg bg-surface-container-low text-xs font-medium text-on-surface focus:outline-none focus:ring-1 focus:ring-secondary appearance-none cursor-pointer" id="reportType">
+<option disabled="" value="">Select report type...</option>
+<option selected="" value="P2P">P2P (MTN to OML)</option>
+<option value="G2P">G2P (MFDP to OML)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Import Source File (Consistent with Management Summary Screen) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 bg-surface-container-lowest">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">upload_file</span>
+</div>
+<h2 class="font-headline-md text-base font-bold text-on-surface">Import Source File</h2>
+</div>
+<span class="font-label-sm text-[11px] font-medium text-secondary bg-secondary-container/10 px-2 py-0.5 rounded">CSV / XLSX</span>
+</div>
+<input accept=".csv, .xlsx" class="hidden" id="fileInput" type="file"/>
+<!-- Large Dropzone Container -->
+<div aria-label="Upload source file" class="min-h-[280px] md:min-h-[320px] rounded-xl bg-surface-container-low flex flex-col items-center justify-center p-8 cursor-pointer transition-colors duration-200 group text-center hover:bg-surface-container" id="dropzone" role="button" tabindex="0">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm mb-4 group-hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined text-3xl text-secondary" id="cloud">cloud_upload</span>
+</div>
+<p class="font-headline-md text-base font-semibold text-on-surface mb-1" id="dragdropTxt">Drag and drop file here</p>
+<p class="text-xs text-on-surface-variant mb-5 font-body-md" id="fileSize">Support CSV, XLSX (Max 50MB)</p>
+<span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-lowest text-xs font-semibold text-secondary shadow-xs hover:bg-surface-container-high transition-colors" id="browseTxt">
+<span class="material-symbols-outlined text-sm">folder_open</span>
+            Browse Files
+          </span>
+</div>
+<!-- Sync Checkbox -->
+<div class="flex items-center gap-3 pt-2">
+<input checked="" class="w-4 h-4 rounded text-secondary focus:ring-secondary focus:ring-offset-0 bg-surface-container cursor-pointer" id="dataUpdateCheckbox" type="checkbox"/>
+<label class="text-xs font-medium text-on-surface cursor-pointer select-none" for="dataUpdateCheckbox">
+            Update in "Dispute Master Database &amp; Audit Log"
+          </label>
+</div>
+</div>
+<!-- Action Button & Inline Progress -->
+<div class="flex flex-col gap-3">
+<button class="w-full py-4 px-6 rounded-xl bg-secondary text-on-secondary font-headline-md font-semibold text-base shadow-md flex items-center justify-center gap-3 hover:opacity-95 active:scale-[0.99] transition-all" id="generateBtn" onclick="handleGenerateDisputeClick()">
+<span class="material-symbols-outlined text-xl">settings_suggest</span>
+<span>Generate Dispute Report</span>
+</button>
+<!-- Dynamic Processing Bar -->
+<div class="hidden flex flex-col gap-2 p-4 rounded-xl bg-surface-container-lowest shadow-sm" id="processingState">
+<div class="flex justify-between items-center text-xs font-medium">
+<span class="text-on-surface flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+              Validating dispute rows &amp; computing settlement balances...
+            </span>
+<span class="font-mono text-secondary font-bold" id="percentText">75%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary transition-all duration-500 rounded-full" id="progressBar" style="width: 75%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Report Tracker & Output Package -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Card 1: Report Tracker (Calendar Card) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between pb-2 bg-surface-container-lowest">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">calendar_month</span>
+</div>
+<h2 class="font-headline-md text-base font-bold text-on-surface">Report Tracker</h2>
+</div>
+<span class="font-label-sm text-[11px] font-medium text-secondary">ACTIVE PERIOD</span>
+</div>
+<!-- Calendar Component -->
+<div class="p-3 bg-surface-container-low rounded-xl flex flex-col gap-3">
+<!-- Calendar Header -->
+<div class="flex items-center justify-between px-1">
+<span class="text-xs font-bold font-headline-md text-on-surface">October 2023</span>
+<div class="flex items-center gap-1">
+<button class="w-6 h-6 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-6 h-6 flex items-center justify-center rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Days Header -->
+<div class="grid grid-cols-7 gap-1 text-center font-label-sm text-[10px] text-outline uppercase font-semibold">
+<span>Su</span>
+<span>Mo</span>
+<span>Tu</span>
+<span>We</span>
+<span>Th</span>
+<span>Fr</span>
+<span>Sa</span>
+</div>
+<!-- Days Grid -->
+<div class="grid grid-cols-7 gap-1 text-center text-xs font-mono">
+<!-- W1 -->
+<span class="py-1 text-outline-variant opacity-50">28</span>
+<span class="py-1 text-outline-variant opacity-50">29</span>
+<span class="py-1 text-outline-variant opacity-50">30</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">1</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">2</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">3</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">4</span>
+<!-- W2 -->
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">5</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">6</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">7</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">8</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">9</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">10</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">11</span>
+<!-- W3 -->
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">12</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">13</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">14</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">15</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">16</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">17</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">18</span>
+<!-- W4 -->
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">19</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">20</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">21</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">22</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">23</span>
+<span class="py-1 bg-secondary text-white font-bold rounded-lg shadow-xs flex items-center justify-center">24</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">25</span>
+<!-- W5 -->
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">26</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">27</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">28</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">29</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">30</span>
+<span class="py-1 text-on-surface-variant hover:bg-surface-container rounded cursor-pointer">31</span>
+<span class="py-1 text-outline-variant opacity-50">1</span>
+</div>
+</div>
+<button class="w-full py-2.5 px-4 rounded-lg bg-surface-container text-xs font-semibold text-on-surface flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors" id="csvBtn" onclick="handleCsvExport()">
+<span class="material-symbols-outlined text-base text-secondary">file_download</span>
+          Export CSV Data
+        </button>
+</div>
+<!-- Card 2: Output Package (Matches SCREEN_1 Output Container) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 bg-surface-container-lowest">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">folder_open</span>
+</div>
+<h2 class="font-headline-md text-base font-bold text-on-surface">Output Package</h2>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-high" title="Idle State"></span>
+</div>
+<!-- Empty & Prepared Resultant File Card -->
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-container/15 text-secondary flex items-center justify-center flex-shrink-0 disabledXlsxIcon" id="xlsxIcon">
+<span class="material-symbols-outlined text-2xl">table_chart</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-semibold text-on-surface truncate" id="fileName">No XLSX report generated yet</p>
+<p class="text-[11px] text-on-surface-variant truncate" id="resultantFileSize">Upload a file and tap Generate</p>
+</div>
+</div>
+<!-- Download CTA -->
+<button class="disabledBtn w-full py-3 px-4 rounded-xl bg-secondary text-white text-xs font-semibold shadow-xs flex items-center justify-center gap-2 transition-all" disabled="" id="downloadBtn">
+<span class="material-symbols-outlined text-base">download</span>
+          Download Report
+        </button>
+<!-- Dispute Run Checklist / Metadata preview -->
+<div class="pt-2 flex flex-col gap-2">
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono">
+<span>DISPUTE RECONCILIATION</span>
+<span class="font-semibold text-on-surface">ISO-8583 COMPLIANT</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono">
+<span>SETTLEMENT PROTOCOL</span>
+<span class="font-semibold text-on-surface">MTN / MFDP TO OML</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Ensure the App Shell navigation reflects Dispute Report active
+  (function updateSidebarActiveNav() {
+    try {
+      const aside = document.querySelector('aside');
+      if (aside) {
+        const navLinks = aside.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          const text = link.textContent.trim();
+          if (text.includes('Dispute Report')) {
+            link.className = "flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl bg-secondary-container/15 text-secondary font-semibold transition-colors text-sm";
+          } else if (text.includes('Management Summary Report')) {
+            link.className = "flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors text-sm font-medium";
+          }
+        });
+      }
+    } catch (e) {}
+  })();
+
+  // Dispute Report specific generate interaction
+  function handleGenerateDisputeClick() {
+    const reportDate = document.getElementById('reportDate');
+    const serialNumber = document.getElementById('serialNumber');
+    const failedCount = document.getElementById('failedCount');
+    const investigatorName = document.getElementById('investigatorName');
+    const investigatorPosition = document.getElementById('investigatorPosition');
+    const reportType = document.getElementById('reportType');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      showError('Please select a source dispute file before generating the report.');
+      return;
+    }
+    if (!reportDate.value || !serialNumber.value || !investigatorName.value) {
+      showError('Please complete all required dispute metadata fields.');
+      return;
+    }
+    if (status === 'Download CSV' || status === 'Download Generated Report') {
+      showError("Program cannot run multiple actions at the same time.");
+      return;
+    }
+
+    if (isValidFileType(file)) {
+      changeState('Report Generating');
+      const reader = new FileReader();
+      reader.onload = function () {
+        setTimeout(() => {
+          changeState('Generate Success');
+          const disputeName = 'Dispute_Report_' + (reportType.value || 'P2P') + '_' + (serialNumber.value.replace(/[^a-zA-Z0-9]/g, '_')) + '.xlsx';
+          const dummyResult = {
+            name: disputeName,
+            sizeText: '1.8 MB',
+            generatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+          generatedReport = { ...dummyResult, base64: 'demo_data_dispute' };
+          showResultantData(dummyResult);
+          showSuccess('Dispute Investigation Report generated successfully! You can now download the XLSX.');
+        }, 1200);
+      };
+      reader.onerror = function () {
+        changeState('Generate Error');
+        showError('Failed to read the input dispute file. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      changeState('Generate Error');
+      showResultantData(null);
+      showError('Invalid file type. Please upload a CSV or XLSX source transaction file.');
+    }
+  }
+
+  function handleCsvExport() {
+    changeState('Download CSV');
+    setTimeout(() => {
+      changeState('Download CSV Result');
+      showSuccess('Dispute Tracker CSV export completed for October 2023.');
+    }, 700);
+  }
+</script></main>
+<script>
+    // Import file handler
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const cloudIcon = document.getElementById('cloud');
+    const dragdropTxt = document.getElementById('dragdropTxt');
+    const fileSize = document.getElementById('fileSize');
+    const browseTxt = document.getElementById('browseTxt');
+
+    const DEFAULT_TXT = dragdropTxt.textContent;
+    const DEFAULT_HINT = fileSize.textContent;
+
+    function formatSize(bytes) {
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function showFileState(file) {
+      dragdropTxt.textContent = file.name;
+      fileSize.textContent = `${formatSize(file.size)} • Ready`;
+
+      cloudIcon.style.color = '#0051d5';
+      dragdropTxt.style.color = '#0051d5';
+      fileSize.style.color = '#0051d5';
+      browseTxt.style.color = '#0051d5';
+      browseTxt.style.borderColor = '#0051d5';
+    }
+
+    function showPromptState() {
+      dragdropTxt.textContent = DEFAULT_TXT;
+      fileSize.textContent = DEFAULT_HINT;
+      cloudIcon.style.color = '';
+      dragdropTxt.style.color = '';
+      fileSize.style.color = '';
+      browseTxt.style.color = '';
+      browseTxt.style.borderColor = '';
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      showFileState(file);
+    }
+
+    const isDisabled = () => dropzone.classList.contains('disabledInputFile');
+
+    dropzone.addEventListener('click', () => {
+      if (isDisabled()) return;
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (isDisabled()) return;
+      const file = e.target.files[0];
+      handleFile(file);
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+      if (isDisabled()) return;
+      e.preventDefault();
+      dropzone.classList.add('bg-surface-container-high');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      if (isDisabled()) return;
+      dropzone.classList.remove('bg-surface-container-high');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      if (isDisabled()) return;
+      e.preventDefault();
+      dropzone.classList.remove('bg-surface-container-high');
+
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+      handleFile(file);
+    });
+
+    // Handle notification messages
+    const errorBox = document.getElementById('errorBox');
+    const errorText = document.getElementById('errorText');
+    const successBox = document.getElementById('successBox');
+    const successText = document.getElementById('successText');
+
+    function showError(message) {
+      successBox.classList.add('hidden');
+      successBox.classList.remove('flex');
+      errorText.textContent = message;
+      errorBox.classList.remove('hidden');
+      errorBox.classList.add('flex');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSuccess(message) {
+      errorBox.classList.add('hidden');
+      errorBox.classList.remove('flex');
+      successText.textContent = message;
+      successBox.classList.remove('hidden');
+      successBox.classList.add('flex');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeMessageBox(boxId) {
+      const box = document.getElementById(boxId);
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+    }
+
+    // Controls
+    const dataUpdateCheckbox = document.getElementById('dataUpdateCheckbox');
+    const generateBtn = document.getElementById('generateBtn');
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const abortedTransactions = document.getElementById('abortedTransactions');
+    const csvBtn = document.getElementById('csvBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const inputFileFiled = document.getElementById('inputFileFiled');
+    const fileName = document.getElementById('fileName');
+    const resultantFileSize = document.getElementById('resultantFileSize');
+    const originalBtnHTML = generateBtn.innerHTML;
+    const originalDwnBtnHTML = downloadBtn.innerHTML;
+    const originalCsvHTML = csvBtn.innerHTML;
+    const xlsxIcon = document.getElementById('xlsxIcon');
+    const processingState = document.getElementById('processingState');
+    const progressBar = document.getElementById('progressBar');
+    const percentText = document.getElementById('percentText');
+    let status = null;
+
+    function changeState(s) {
+      status = s;
+      if (status === 'Report Generating') {
+        startDate.classList.add('disabledInput');
+        endDate.classList.add('disabledInput');
+        abortedTransactions.classList.add('disabledInput');
+        inputFileFiled.classList.add('disabledFileInput');
+        generateBtn.innerHTML = "Generating...";
+        fileName.innerHTML = "Generating...";
+        resultantFileSize.innerHTML = dragdropTxt.textContent + " is processing.";
+        dataUpdateCheckbox.classList.add('disabledCheckboxRow');
+        generateBtn.classList.add('disabledBtn');
+        csvBtn.classList.add('disabledBtn');
+        xlsxIcon.classList.add('disabledXlsxIcon');
+        downloadBtn.classList.add('disabledBtn');
+        dropzone.classList.add('disabledInputFile');
+        dropzone.classList.remove('cursor-pointer');
+        if (processingState) {
+          processingState.classList.remove('hidden');
+          if (progressBar) progressBar.style.width = '75%';
+          if (percentText) percentText.textContent = '75%';
+        }
+      } else if (status === 'Generate Error' || status === 'Generate Success') {
+        startDate.classList.remove('disabledInput');
+        endDate.classList.remove('disabledInput');
+        abortedTransactions.classList.remove('disabledInput');
+        inputFileFiled.classList.remove('disabledFileInput');
+        generateBtn.innerHTML = originalBtnHTML;
+        dataUpdateCheckbox.classList.remove('disabledCheckboxRow');
+        generateBtn.classList.remove('disabledBtn');
+        csvBtn.classList.remove('disabledBtn');
+        xlsxIcon.classList.remove('disabledXlsxIcon');
+        dropzone.classList.remove('disabledInputFile');
+        dropzone.classList.add('cursor-pointer');
+        if (processingState) {
+          if (progressBar) progressBar.style.width = status === 'Generate Success' ? '100%' : '0%';
+          if (percentText) percentText.textContent = status === 'Generate Success' ? '100%' : '0%';
+          setTimeout(() => {
+            processingState.classList.add('hidden');
+          }, 600);
+        }
+      } else if (status === 'Download Generated Report') {
+        downloadBtn.innerHTML = 'Downloading...';
+        downloadBtn.classList.add('disabledBtn');
+      } else if (status === 'Download Generated Report Result') {
+        downloadBtn.innerHTML = originalDwnBtnHTML;
+        downloadBtn.classList.remove('disabledBtn');
+      } else if (status === 'Download CSV') {
+        csvBtn.innerHTML = 'Downloading...';
+        csvBtn.classList.add('disabledBtn');
+      } else if (status === 'Download CSV Result') {
+        csvBtn.innerHTML = originalCsvHTML;
+        csvBtn.classList.remove('disabledBtn');
+      }
+    }
+
+    function showResultantData(result) {
+      if (result) {
+        fileName.textContent = result.name;
+        resultantFileSize.textContent = result.sizeText + ' • Generated ' + (result.generatedAt || 'Just now');
+        downloadBtn.classList.remove('disabledBtn');
+        const successDetails = document.getElementById('successDetails');
+        if (successDetails) {
+          successDetails.classList.remove('hidden');
+          const ts = document.getElementById('timestamp');
+          if (ts) ts.textContent = result.generatedAt || new Date().toLocaleTimeString();
+        }
+      } else {
+        fileName.innerHTML = "Failed to generate.";
+        resultantFileSize.textContent = '0 MB';
+        downloadBtn.classList.add('disabledBtn');
+      }
+    }
+
+    function isValidFileType(file) {
+      const allowedExtensions = ['csv', 'xlsx'];
+      const extension = file.name.split('.').pop().toLowerCase();
+      return allowedExtensions.includes(extension);
+    }
+
+    function handleGenerateClick() {
+      const dataUpdateStatus = dataUpdateCheckbox.checked;
+      const file = fileInput.files[0];
+      const abortedCount = abortedTransactions.value;
+
+      if (!file) {
+        showError('Please select a file before generating the report.');
+        return;
+      }
+      if (!startDate.value || !endDate.value) {
+        showError('Please select time before generating the report.');
+        return;
+      }
+      if (status === 'Download CSV' || status === 'Download Generated Report') {
+        showError("Program can't run two functions at the same time");
+        return;
+      }
+
+      if (isValidFileType(file)) {
+        changeState('Report Generating');
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const base64 = e.target.result.split(',')[1];
+          if (window.google && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler(function (result) {
+                changeState('Generate Success');
+                generatedReport = result;
+                showResultantData(result);
+                showSuccess('Report generated successfully! Click Download to save it.');
+              })
+              .withFailureHandler(function (err) {
+                changeState('Generate Error');
+                showResultantData(null);
+                showError(err.message);
+              })
+              .mgnSummaryReport(
+                base64,
+                file.name,
+                file.type,
+                startDate.value,
+                endDate.value,
+                dataUpdateStatus,
+                abortedCount
+              );
+          } else {
+            // Simulated response for standalone browser demo
+            setTimeout(() => {
+              changeState('Generate Success');
+              const dummyResult = {
+                name: 'Management_Summary_Report_' + (new Date().toISOString().slice(0, 10)) + '.xlsx',
+                sizeText: '2.4 MB',
+                generatedAt: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+              };
+              generatedReport = { ...dummyResult, base64: 'demo_data' };
+              showResultantData(dummyResult);
+              showSuccess('Report generated successfully! Click Download to save it.');
+            }, 1000);
+          }
+        };
+        reader.onerror = function () {
+          changeState('Generate Error');
+          showError('Failed to read the file. Please try again.');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        changeState('Generate Error');
+        showResultantData(null);
+        showError('Invalid file type. Please upload a CSV or XLSX file.');
+      }
+    }
+
+    let generatedReport = null;
+    downloadBtn.addEventListener('click', () => {
+      if (!generatedReport || !generatedReport.base64) {
+        showError('No report available to download. Please generate a report first.');
+        return;
+      }
+      changeState('Download Generated Report');
+      setTimeout(() => {
+        changeState('Download Generated Report Result');
+        showSuccess('Download started.');
+      }, 700);
+    });
+
+    csvBtn.addEventListener('click', () => {
+      changeState('Download CSV');
+      setTimeout(() => {
+        changeState('Download CSV Result');
+        showSuccess('CSV export generated.');
+      }, 700);
+    });
+  </script>
+</body></html>
