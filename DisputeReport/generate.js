@@ -1,16 +1,15 @@
+// Replace this with your Google Sheet Template File ID
+const DISPUTE_TEMPLATE_FILE_ID = "1prQ7Y9-hxmfcKB8bfHHC80Em32O_8Yqi";
+
 /**
- * Main server-side function for generating Dispute Reports.
- * Called from index.html via google.script.run.generateDisputeReport(params)
- *
- * @param {Object} params - Dispute form parameters and file payload.
- * @return {Object} Result object containing filename, base64 data, size, and timestamp.
+ * Main server-side handler called from UI.
+ * Populates the duplicated template and provides the downloadable XLSX.
  */
 function generateDisputeReport(params) {
   let tempImportFileId = null;
-  let reportSpreadsheetId = null;
+  let copiedReportId = null;
 
   try {
-    // 1. Destructure incoming parameters
     const {
       fileBase64,
       fileName,
@@ -20,108 +19,65 @@ function generateDisputeReport(params) {
       failedCount,
       investigatorName,
       investigatorPosition,
-      reportType,
-      updateDatabase
+      reportType
     } = params;
 
     if (!fileBase64) {
-      throw new Error("No source file was provided for report generation.");
+      throw new Error("No source transaction file provided.");
     }
 
-    // 2. Decode the uploaded file blob
+    // 1. Construct final report filename
+    const cleanSerial = (serialNumber || '001').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const category = reportType || 'P2P';
+    const outputFileName = `Dispute_Report_${category}_${cleanSerial}.xlsx`;
+
+    // 2. Duplicate the Template file
+    const duplicated = createReportFromTemplate(DISPUTE_TEMPLATE_FILE_ID, outputFileName);
+    copiedReportId = duplicated.id;
+    const spreadsheet = duplicated.spreadsheet;
+    const sheet = spreadsheet.getSheets()[0]; // Active report sheet in template
+
+    // 3. Fill in Header & Metadata into the duplicated template
+    // (Adjust cell coordinates if your template uses different cells)
+    sheet.getRange("B3").setValue(reportDate);
+    sheet.getRange("D3").setValue(serialNumber);
+    sheet.getRange("B4").setValue(category);
+    sheet.getRange("D4").setValue(failedCount || 0);
+    sheet.getRange("B5").setValue(`${investigatorName} (${investigatorPosition || 'Staff'})`);
+    sheet.getRange("D5").setValue(Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss"));
+
+    // 4. Parse the uploaded source transactions (CSV or XLSX)
     const decodedBytes = Utilities.base64Decode(fileBase64);
     const uploadedBlob = Utilities.newBlob(decodedBytes, fileType, fileName);
+    let rowsToInsert = [];
 
-    // 3. Extract transaction rows from CSV or XLSX
-    let sourceData = [];
     const isCsv = fileName.toLowerCase().endsWith('.csv') || (fileType && fileType.includes('csv'));
-
     if (isCsv) {
-      const csvString = uploadedBlob.getDataAsString();
-      sourceData = Utilities.parseCsv(csvString);
+      rowsToInsert = Utilities.parseCsv(uploadedBlob.getDataAsString());
     } else {
-      // XLSX: Use Drive v2 Advanced Service to convert to temporary Google Sheets
-      const tempImportFile = Drive.Files.insert(
-        {
-          title: 'temp_dispute_import_' + new Date().getTime(),
-          mimeType: MimeType.GOOGLE_SHEETS
-        },
+      // XLSX: convert to temporary Google Sheet using Drive v2
+      const tempImport = Drive.Files.insert(
+        { title: 'temp_import_' + new Date().getTime(), mimeType: MimeType.GOOGLE_SHEETS },
         uploadedBlob,
         { convert: true }
       );
-      tempImportFileId = tempImportFile.id;
-
-      const tempSpreadsheet = SpreadsheetApp.openById(tempImportFileId);
-      const tempSheet = tempSpreadsheet.getSheets()[0];
-      sourceData = tempSheet.getDataRange().getValues();
+      tempImportFileId = tempImport.id;
+      const tempSheet = SpreadsheetApp.openById(tempImportFileId).getSheets()[0];
+      rowsToInsert = tempSheet.getDataRange().getValues();
     }
 
-    // 4. Create the Dispute Report Spreadsheet
-    const cleanSerial = (serialNumber || '001').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const typeLabel = reportType || 'P2P';
-    const outputFileName = `Dispute_Report_${typeLabel}_${cleanSerial}.xlsx`;
-
-    const reportSpreadsheet = SpreadsheetApp.create(`Dispute_Report_${typeLabel}_${cleanSerial}`);
-    reportSpreadsheetId = reportSpreadsheet.getId();
-    const sheet = reportSpreadsheet.getActiveSheet();
-    sheet.setName("Dispute Summary");
-
-    // 5. Build Header & Metadata Section
-    sheet.getRange("A1:G1").merge()
-      .setValue("DISPUTE INVESTIGATION & SETTLEMENT REPORT")
-      .setFontWeight("bold")
-      .setFontSize(14)
-      .setBackground("#131b2e")
-      .setFontColor("#ffffff")
-      .setHorizontalAlignment("center")
-      .setVerticalAlignment("middle");
-    sheet.setRowHeight(1, 40);
-
-    const metadata = [
-      ["Report Date:", reportDate || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd"), "Serial Number:", serialNumber || "N/A"],
-      ["Report Type:", typeLabel, "Failed Count (Synced):", failedCount || 0],
-      ["Investigator:", `${investigatorName || 'N/A'} (${investigatorPosition || 'Staff'})`, "Protocol:", "ISO-8583 Compliant / MTN-MFDP to OML"],
-      ["Generated At:", Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss"), "Audit Log Status:", updateDatabase ? "Synced" : "Manual"]
-    ];
-
-    const metaRange = sheet.getRange(3, 1, metadata.length, 4);
-    metaRange.setValues(metadata);
-    sheet.getRange(3, 1, metadata.length, 1).setFontWeight("bold").setFontColor("#45464d");
-    sheet.getRange(3, 3, metadata.length, 1).setFontWeight("bold").setFontColor("#45464d");
-
-    // 6. Populate Reconciled Source Transactions
-    const startRow = 8;
-    if (sourceData && sourceData.length > 0) {
-      const numRows = sourceData.length;
-      const numCols = sourceData[0].length;
-      const dataRange = sheet.getRange(startRow, 1, numRows, numCols);
-      dataRange.setValues(sourceData);
-
-      // Header row styling
-      const headerRowRange = sheet.getRange(startRow, 1, 1, numCols);
-      headerRowRange.setFontWeight("bold")
-        .setBackground("#0051d5")
-        .setFontColor("#ffffff")
-        .setHorizontalAlignment("center");
-      sheet.setRowHeight(startRow, 28);
-
-      // Border and grid formatting
-      dataRange.setBorder(true, true, true, true, true, true, "#c6c6cd", SpreadsheetApp.BorderStyle.SOLID);
-    } else {
-      sheet.getRange(startRow, 1).setValue("No transaction data found in source file.");
+    // 5. Append transaction rows into the duplicated template
+    // Starts at row 9 (after the template headers). Adjust if your template starts on another row.
+    const startRow = 9;
+    if (rowsToInsert && rowsToInsert.length > 0) {
+      sheet.getRange(startRow, 1, rowsToInsert.length, rowsToInsert[0].length).setValues(rowsToInsert);
     }
 
-    // Auto-fit columns
-    const maxCols = Math.max(7, sourceData && sourceData[0] ? sourceData[0].length : 4);
-    for (let c = 1; c <= maxCols; c++) {
-      sheet.autoResizeColumn(c);
-    }
-
-    // Flush changes to ensure content is saved
+    // Save and commit all sheet changes
     SpreadsheetApp.flush();
 
-    // 7. Export Spreadsheet as XLSX binary
-    const exportUrl = "https://docs.google.com/spreadsheets/d/" + reportSpreadsheetId + "/export?format=xlsx";
+    // 6. Export the duplicated spreadsheet as XLSX
+    const exportUrl = `https://docs.google.com/spreadsheets/d/${copiedReportId}/export?format=xlsx`;
     const response = UrlFetchApp.fetch(exportUrl, {
       headers: {
         Authorization: "Bearer " + ScriptApp.getOAuthToken()
@@ -130,40 +86,30 @@ function generateDisputeReport(params) {
     });
 
     if (response.getResponseCode() !== 200) {
-      throw new Error("Failed to export report as XLSX. Error code: " + response.getResponseCode());
+      throw new Error("Export failed with status code " + response.getResponseCode());
     }
 
     const xlsxBlob = response.getBlob().setName(outputFileName);
     const xlsxBytes = xlsxBlob.getBytes();
-    const resultBase64 = Utilities.base64Encode(xlsxBytes);
 
-    // 8. Return result object to UI
+    // 7. Return payload to UI for immediate client-side download
     return {
       name: outputFileName,
-      base64: resultBase64,
-      sizeText: formatBytes_(xlsxBytes.length),
+      base64: Utilities.base64Encode(xlsxBytes),
+      sizeText: (xlsxBytes.length / (1024 * 1024)).toFixed(2) + " MB",
       generatedAt: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "hh:mm a")
     };
 
-  } catch (error) {
-    throw new Error("Report Generation Failed: " + error.message);
+  } catch (err) {
+    throw new Error("Report Generation Failed: " + err.message);
   } finally {
-    // 9. Clean up temporary Drive files
+    // 8. Clean up temporary files
     if (tempImportFileId) {
       try { Drive.Files.remove(tempImportFileId); } catch (e) {}
     }
-    if (reportSpreadsheetId) {
-      try { Drive.Files.remove(reportSpreadsheetId); } catch (e) {}
+    // Clean up duplicated working copy once exported (or remove this line to keep a copy in Drive)
+    if (copiedReportId) {
+      try { Drive.Files.remove(copiedReportId); } catch (e) {}
     }
   }
-}
-
-/**
- * Helper to format byte sizes into KB / MB.
- */
-function formatBytes_(bytes) {
-  if (bytes < 1024 * 1024) {
-    return (bytes / 1024).toFixed(1) + " KB";
-  }
-  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
